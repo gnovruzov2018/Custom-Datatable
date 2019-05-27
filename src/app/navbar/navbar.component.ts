@@ -16,7 +16,11 @@ export class NavbarComponent implements OnInit {
   constructor(public authService: AuthService, private alertify: AlertifyService, private router: Router) { }
 
   ngOnInit() {
-    this.username = localStorage.getItem('username');
+    if (!!localStorage.getItem('username')) {
+      this.username = localStorage.getItem('username');
+    } else {
+      this.username = this.authService.name;
+    }
   }
 
   login() {

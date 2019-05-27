@@ -10,4 +10,7 @@ body{
 .form-row {
     margin-top: 25px; 
 }
+.sortBtn {
+    text-decoration: none;
+}
 

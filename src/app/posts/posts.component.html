@@ -20,10 +20,31 @@
     <table class="table">
       <thead class="thead-light">
         <tr>
-          <th scope="col">Id</th>
-          <th scope="col">Title</th>
-          <th scope="col">Content</th>
-          <th scope="col">User Id</th>
+          <th scope="col"><button class="btn btn-link mr-3 sortBtn" (click)="onSort('id')">Id
+              <span *ngIf="this.currentSortCol === 'id'">
+                  <i *ngIf="this.currentSortType === 'asc'" class="fa fa-sort-asc" aria-hidden="true"></i>
+                  <i *ngIf="this.currentSortType === 'desc'" class="fa fa-sort-desc" aria-hidden="true"></i>
+              </span>
+            </button></th>
+          <th scope="col"><button class="btn btn-link mr-3 sortBtn" (click)="onSort('title')">Title
+            <span *ngIf="this.currentSortCol === 'title'">
+                <i *ngIf="this.currentSortType === 'asc'" class="fa fa-sort-asc" aria-hidden="true"></i>
+                <i *ngIf="this.currentSortType === 'desc'" class="fa fa-sort-desc" aria-hidden="true"></i>
+            </span>
+          </button>
+          </th>
+          <th scope="col"><button class="btn btn-link mr-3 sortBtn" (click)="onSort('body')">Content
+              <span *ngIf="this.currentSortCol === 'body'">
+                  <i *ngIf="this.currentSortType === 'asc'" class="fa fa-sort-asc" aria-hidden="true"></i>
+                  <i *ngIf="this.currentSortType === 'desc'" class="fa fa-sort-desc" aria-hidden="true"></i>
+              </span>
+            </button></th>
+          <th scope="col"><button class="btn btn-link mr-3 sortBtn" (click)="onSort('userId')">User Id
+              <span *ngIf="this.currentSortCol === 'userId'">
+                  <i *ngIf="this.currentSortType === 'asc'" class="fa fa-sort-asc" aria-hidden="true"></i>
+                  <i *ngIf="this.currentSortType === 'desc'" class="fa fa-sort-desc" aria-hidden="true"></i>
+              </span>
+            </button></th>
           <th scope="col">Comments</th>
         </tr>
       </thead>

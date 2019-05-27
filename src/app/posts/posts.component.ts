@@ -3,9 +3,9 @@ import { PostService } from './../_services/post.service';
 import { Post } from '../_models/post';
 import { Comment } from '../_models/comment';
 import { AlertifyService } from './../_services/alertify.service';
-import { forEach } from '@angular/router/src/utils/collection';
 import { Pagination, PaginatedResult } from './../_models/pagination';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+import { Sort } from './../_models/sort';
 
 @Component({
   selector: 'app-posts',
@@ -21,6 +21,14 @@ export class PostsComponent implements OnInit {
   pageSize = 15;
   modalRef: BsModalRef;
   test: number;
+  currentSortCol: string;
+  currentSortType: string;
+  sortCols: Sort[] = [
+    {sortCol: 'title', sortType: 'asc'},
+    {sortCol: 'body', sortType: 'asc'},
+    {sortCol: 'id', sortType: 'asc'},
+    {sortCol: 'userId', sortType: 'asc'}
+  ];
 
   constructor(private postService: PostService,
               private alertify: AlertifyService,
@@ -31,10 +39,12 @@ export class PostsComponent implements OnInit {
   }
 
   loadPosts() {
-    const paginatedResult: PaginatedResult<Post[]> = new PaginatedResult<Post[]>();
     this.postService.getPosts()
       .subscribe(
     (posts: Post[]) => {
+      if (this.currentSortCol !== 'undefined') {
+        posts = this.sortColumn(posts);
+      }
       this.posts = this.paginate(posts, this.pageNumber, this.pageSize).result;
       this.pagination = this.paginate(posts, this.pageNumber, this.pageSize).pagination;
     }, error => {
@@ -58,7 +68,7 @@ export class PostsComponent implements OnInit {
 
     paginatedResult.pagination = pagin;
     this.pagination = paginatedResult.pagination;
-    --page; // because pages logically start with 1, but technically with 0
+    --page;
     paginatedResult.result = posts.slice(page * pageSize, (page + 1) * pageSize);
     return paginatedResult;
   }
@@ -86,15 +96,10 @@ export class PostsComponent implements OnInit {
         this.posts.splice(i, 1);
       }
     }
-    console.log(this.posts.slice());
   }
 
   aContainsB (a, b) {
     return a.indexOf(b) >= 0;
-  }
-
-  loadComments(id) {
-    alert(id);
   }
 
   openModal(template: TemplateRef<any>, id: number) {
@@ -103,11 +108,61 @@ export class PostsComponent implements OnInit {
       (comments: Comment[]) => {
         this.comments = comments;
       }, error => {
-        console.log(error);
         this.alertify.error(error);
       });
     this.modalRef = this.modalService.show(template,
       Object.assign({}, { class: 'gray modal-lg' }));
   }
 
+  onSort(sortCol: string) {
+    this.currentSortCol = sortCol;
+    this.currentSortType = this.sortCols.find(i => i.sortCol === sortCol).sortType;
+    this.sortCols.find(i => i.sortCol === sortCol).sortType = this.currentSortType === 'asc' ? 'desc' : 'asc';
+    this.loadPosts();
+  }
+
+  sortColumn(posts: Post[]) {
+    if (this.currentSortCol === 'title') {
+      if (this.currentSortType === 'asc') {
+        posts.sort(function(a, b) {
+          return (a.title < b.title ? -1 : 1);
+      });
+    } else {
+        posts.sort(function(a, b) {
+          return (b.title < a.title ? -1 : 1);
+      });
+    }
+  } else if (this.currentSortCol === 'body') {
+      if (this.currentSortType === 'asc') {
+        posts.sort(function(a, b) {
+          return (a.body < b.body ? -1 : 1);
+      });
+    } else {
+        posts.sort(function(a, b) {
+          return (b.body < a.body ? -1 : 1);
+      });
+    }
+  } else if (this.currentSortCol === 'id') {
+    if (this.currentSortType === 'asc') {
+      posts.sort(function(a, b) {
+        return (a.id < b.id ? -1 : 1);
+    });
+  } else {
+      posts.sort(function(a, b) {
+        return (b.id < a.id ? -1 : 1);
+    });
+  }
+} else if (this.currentSortCol === 'userId') {
+  if (this.currentSortType === 'asc') {
+    posts.sort(function(a, b) {
+      return (a.userId < b.userId ? -1 : 1);
+  });
+} else {
+    posts.sort(function(a, b) {
+      return (b.userId < a.userId ? -1 : 1);
+  });
+}
+}
+  return posts;
+  }
 }
